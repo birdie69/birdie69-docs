@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 1.0  
-**Last Updated:** 2026-02-14  
+**Version:** 1.1  
+**Last Updated:** 2026-03-07  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -10,13 +10,17 @@
 
 **Goal:** All repos initialized, CI/CD skeletons in place, local dev working.
 
-### Day 1 — Architecture & Setup ✅
+### Day 1 — Architecture & Setup ✅ COMPLETE (2026-03-07)
 - [x] Project pivot decided and documented (ADRs 001–005)
-- [x] birdie69-docs repo initialized with Charter, Architecture, Roadmap, ADRs
-- [x] 5 GitHub repos created in learn-claude org
-- [x] Agent prompts updated for birdie69
-- [ ] Jira project `B69` created
-- [ ] Confluence space `B69` created and initial pages imported
+- [x] birdie69-docs: Charter, Architecture Overview, Repository Index, Roadmap, ADRs, Agent Roster
+- [x] Original product specs added to `specs/` (development plan, product spec, UI/UX design system)
+- [x] 5 GitHub repos created and pushed to `birdie69` org
+- [x] All agent prompts updated for birdie69 context (.claude/prompts/)
+- [x] Jira project `B69` created — 15 tickets (B69-1 Done, B69-2–15 in backlog)
+- [x] Confluence space `B69` created — 17 pages imported
+- [x] birdie69-cms: reusable Strapi config files pre-staged (database.ts, develop.js, tsconfig.json, docker-compose.yml)
+- [x] GitHub org: all repos transferred from `learn-claude` to `birdie69`
+- [x] Local workspace: blog-* repos removed, only birdie69-* remain
 
 ### Day 2 — API Scaffold
 - [ ] `birdie69-api`: .NET 8 solution with Clean Architecture project structure
