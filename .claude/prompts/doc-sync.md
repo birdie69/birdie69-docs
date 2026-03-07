@@ -31,21 +31,18 @@ Sync these to Confluence space B69.
 
 | File (relative to birdie69-docs/) | Confluence Page Title | Parent | Page ID |
 |---|---|---|---|
-| `PROJECT_CHARTER.md` | Project Charter | (root) | TBD |
-| `ARCHITECTURE_OVERVIEW.md` | Architecture Overview | (root) | TBD |
-| `REPOSITORY_INDEX.md` | Repository Index | (root) | TBD |
-| `ROADMAP.md` | Roadmap | (root) | TBD |
-| `adrs/ADR-001-mobile-capacitor.md` | ADR-001: Mobile Capacitor | ADRs | TBD |
-| `adrs/ADR-002-auth-azure-ad-b2c.md` | ADR-002: Auth Azure AD B2C | ADRs | TBD |
-| `adrs/ADR-003-backend-dotnet8.md` | ADR-003: Backend .NET 8 | ADRs | TBD |
-| `adrs/ADR-004-infra-container-apps.md` | ADR-004: Infra Container Apps | ADRs | TBD |
-| `adrs/ADR-005-multi-repo.md` | ADR-005: Multi-Repo Strategy | ADRs | TBD |
-| `requirements/product-requirements.md` | Product Requirements | Requirements | TBD |
-| `planning/backlog.md` | Product Backlog | Planning | TBD |
-| `architecture/system-context.md` | System Context | Architecture | TBD |
-
-> **Note:** Page IDs are TBD until Confluence space B69 is created.  
-> Once created, update this table with actual IDs from the Confluence API.
+| `PROJECT_CHARTER.md` | Project Charter | (root) | 95158288 |
+| `ARCHITECTURE_OVERVIEW.md` | Architecture Overview | (root) | 95027658 |
+| `REPOSITORY_INDEX.md` | Repository Index | (root) | 95027674 |
+| `ROADMAP.md` | Roadmap | (root) | 95158304 |
+| `adrs/ADR-001-mobile-capacitor.md` | ADR-001: Mobile Capacitor | ADRs (95092737) | 95092767 |
+| `adrs/ADR-002-auth-azure-ad-b2c.md` | ADR-002: Auth Azure AD B2C | ADRs (95092737) | 95027691 |
+| `adrs/ADR-003-backend-dotnet8.md` | ADR-003: Backend .NET 8 | ADRs (95092737) | 95158319 |
+| `adrs/ADR-004-infra-container-apps.md` | ADR-004: Infra Container Apps | ADRs (95092737) | 95125520 |
+| `adrs/ADR-005-multi-repo.md` | ADR-005: Multi-Repo Strategy | ADRs (95092737) | 95027707 |
+| `requirements/product-requirements.md` | Product Requirements | Requirements (95092752) | 95125536 |
+| `planning/backlog.md` | Product Backlog | Planning (95158273) | 95027726 |
+| `architecture/system-context.md` | System Context | Architecture (95125505) | 95027741 |
 
 **Confluence Space:** `B69`  
 **Base URL:** `https://narwhal.atlassian.net/wiki`
