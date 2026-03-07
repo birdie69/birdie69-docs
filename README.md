@@ -41,11 +41,11 @@ birdie69 gives couples one question per day. Both partners answer independently,
 
 | Repo | Purpose |
 |------|---------|
-| [birdie69-docs](https://github.com/learn-claude/birdie69-docs) | This repo — documentation |
-| [birdie69-api](https://github.com/learn-claude/birdie69-api) | .NET 8 ASP.NET Core API |
-| [birdie69-cms](https://github.com/learn-claude/birdie69-cms) | Strapi v5 CMS |
-| [birdie69-web](https://github.com/learn-claude/birdie69-web) | Next.js 14+ + Capacitor |
-| [birdie69-infra](https://github.com/learn-claude/birdie69-infra) | Terraform (Azure) |
+| [birdie69-docs](https://github.com/birdie69/birdie69-docs) | This repo — documentation |
+| [birdie69-api](https://github.com/birdie69/birdie69-api) | .NET 8 ASP.NET Core API |
+| [birdie69-cms](https://github.com/birdie69/birdie69-cms) | Strapi v5 CMS |
+| [birdie69-web](https://github.com/birdie69/birdie69-web) | Next.js 14+ + Capacitor |
+| [birdie69-infra](https://github.com/birdie69/birdie69-infra) | Terraform (Azure) |
 
 ---
 

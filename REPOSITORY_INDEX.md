@@ -1,6 +1,6 @@
 # Repository Index — birdie69
 
-**Organization:** [learn-claude](https://github.com/learn-claude)  
+**Organization:** [birdie69](https://github.com/birdie69)  
 **Last Updated:** 2026-02-14
 
 ---
@@ -9,11 +9,11 @@
 
 | Repository | Purpose | Stack | Status |
 |-----------|---------|-------|--------|
-| [birdie69-docs](https://github.com/learn-claude/birdie69-docs) | Project documentation, ADRs, .claude/ agent prompts | Markdown | ✅ Active |
-| [birdie69-api](https://github.com/learn-claude/birdie69-api) | .NET 8 ASP.NET Core REST API | C# .NET 8 | 🔧 Setup |
-| [birdie69-cms](https://github.com/learn-claude/birdie69-cms) | Strapi v5 question bank CMS | Node.js / TypeScript | 🔧 Setup |
-| [birdie69-web](https://github.com/learn-claude/birdie69-web) | Next.js 14+ web + Capacitor mobile | TypeScript / React | 🔧 Setup |
-| [birdie69-infra](https://github.com/learn-claude/birdie69-infra) | Terraform IaC for Azure | Terraform / HCL | 🔧 Setup |
+| [birdie69-docs](https://github.com/birdie69/birdie69-docs) | Project documentation, ADRs, .claude/ agent prompts | Markdown | ✅ Active |
+| [birdie69-api](https://github.com/birdie69/birdie69-api) | .NET 8 ASP.NET Core REST API | C# .NET 8 | 🔧 Setup |
+| [birdie69-cms](https://github.com/birdie69/birdie69-cms) | Strapi v5 question bank CMS | Node.js / TypeScript | 🔧 Setup |
+| [birdie69-web](https://github.com/birdie69/birdie69-web) | Next.js 14+ web + Capacitor mobile | TypeScript / React | 🔧 Setup |
+| [birdie69-infra](https://github.com/birdie69/birdie69-infra) | Terraform IaC for Azure | Terraform / HCL | 🔧 Setup |
 
 ---
 
