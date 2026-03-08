@@ -43,6 +43,7 @@ Sync these to Confluence space B69.
 | `requirements/product-requirements.md` | Product Requirements | Requirements (95092752) | 95125536 |
 | `planning/backlog.md` | Product Backlog | Planning (95158273) | 95027726 |
 | `architecture/system-context.md` | System Context | Architecture (95125505) | 95027741 |
+| `specs/` (summary index) | Product Specifications (Original) | (root) | 95125561 |
 
 **Confluence Space:** `B69`  
 **Base URL:** `https://narwhal.atlassian.net/wiki`
