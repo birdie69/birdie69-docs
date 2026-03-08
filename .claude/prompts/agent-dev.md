@@ -54,6 +54,58 @@ Before any task, read:
 
 ---
 
+## Iterative Working Protocol
+
+**NEVER deliver everything in one shot.** Always work in small, verifiable steps.
+
+### Mandatory step sequence for every feature:
+
+```
+Step 1 — Announce plan
+  List exactly what files you will create/modify and in what order.
+  Wait for approval before proceeding.
+
+Step 2 — Domain layer first
+  Create/modify entities, value objects, domain events.
+  Run: dotnet build src/Birdie69.Domain
+  Confirm: ✅ builds
+
+Step 3 — Application layer
+  Add command/query + handler + DTO + validator.
+  Run: dotnet build src/Birdie69.Application
+  Confirm: ✅ builds
+
+Step 4 — Domain + Application unit tests
+  Write and run tests for the above.
+  Run: dotnet test tests/Birdie69.Domain.Tests tests/Birdie69.Application.Tests
+  Confirm: ✅ all pass
+
+Step 5 — Infrastructure layer
+  Add repository implementation, EF Core configuration.
+  Run: dotnet build src/Birdie69.Infrastructure
+  Confirm: ✅ builds
+
+Step 6 — API layer
+  Add controller endpoint, wire up DI.
+  Run: dotnet build
+  Confirm: ✅ full solution builds
+
+Step 7 — Integration tests
+  Run: dotnet test tests/Birdie69.Integration.Tests
+  Confirm: ✅ all pass
+
+Step 8 — Commit
+  One focused commit per step. Message format: "feat(B69-NN): <what and why>"
+```
+
+### Rules:
+- After each step, **show the build/test output** before continuing.
+- If a step fails, **stop and fix it** before moving to the next step.
+- Each step gets **its own commit** — do not batch unrelated changes.
+- For scaffolds, steps 1–3 can be combined, but **still run the build between layers**.
+
+---
+
 ## .NET 8 Implementation Patterns
 
 ### Project Structure
