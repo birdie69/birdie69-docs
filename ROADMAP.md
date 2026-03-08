@@ -21,6 +21,8 @@
 - [x] birdie69-cms: reusable Strapi config files pre-staged (database.ts, develop.js, tsconfig.json, docker-compose.yml)
 - [x] GitHub org: all repos transferred from `learn-claude` to `birdie69`
 - [x] Local workspace: blog-* repos removed, only birdie69-* remain
+- [x] Branch protection enabled on all 5 repos (PR required, no force push) — B69-16 ✅
+- [x] Sprint 0 — Foundation created in Jira (B69-2, B69-3, B69-4, B69-5, B69-6, B69-16)
 
 ### Day 2 — API Scaffold
 - [ ] `birdie69-api`: .NET 8 solution with Clean Architecture project structure
