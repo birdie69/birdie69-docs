@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 1.1  
-**Last Updated:** 2026-03-07  
+**Version:** 1.2  
+**Last Updated:** 2026-02-14  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -24,16 +24,18 @@
 - [x] Branch protection enabled on all 5 repos (PR required, no force push) — B69-16 ✅
 - [x] Sprint 0 — Foundation created in Jira (B69-2, B69-3, B69-4, B69-5, B69-6, B69-16)
 
-### Day 2 — API Scaffold
-- [ ] `birdie69-api`: .NET 8 solution with Clean Architecture project structure
-  - Domain, Application, Infrastructure, Api projects
-  - EF Core + PostgreSQL (local Docker)
-  - Azure AD B2C JWT validation (middleware only, no flows yet)
-  - OpenAPI/Swagger UI configured
-  - xUnit test projects scaffolded
-- [ ] `birdie69-api`: Docker Compose for local PostgreSQL + Redis
-- [ ] `birdie69-api`: GitHub Actions CI (build + test)
-- [ ] ADR updated if any decisions made
+### Day 2 — API Scaffold ✅ COMPLETE (2026-02-14)
+- [x] `birdie69-api`: .NET 8 Clean Architecture scaffold (Domain, Application, Infrastructure, Api) — B69-2 ✅
+  - Domain entities: User, Couple, Question, Answer, InviteCode
+  - CQRS handlers via MediatR, FluentValidation, AutoMapper
+  - EF Core + PostgreSQL + Redis stubs
+  - Azure AD B2C JWT middleware (stub)
+  - Swagger UI at `http://localhost:5000/swagger`
+  - 12 unit/application tests — all passing
+- [x] `birdie69-api`: Docker Compose for local PostgreSQL + Redis
+- [x] Post-scaffold fixes: Swashbuckle (net8.0), FluentValidation DI, GlobalUsings, Result<T> wrapping
+- [x] Dockerfile fix: `Directory.Build.props` + `global.json` copied before `dotnet restore` — PR #3 ✅
+- [x] Dev agent prompt updated: mandatory iterative 8-step protocol (build/test after each layer)
 
 ### Day 3 — CMS Setup
 - [ ] `birdie69-cms`: Strapi v5 initialized with PostgreSQL
@@ -134,7 +136,7 @@
 
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
-| Phase 0: Foundation | 🔄 In Progress | Pre-Sprint |
+| Phase 0: Foundation | 🔄 In Progress (Day 3 next) | Sprint 0 |
 | Phase 1: Core Features | ⏳ Planned | Sprint 1 + 2 |
 | Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
