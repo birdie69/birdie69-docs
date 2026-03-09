@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 1.2  
-**Last Updated:** 2026-02-14  
+**Version:** 1.3  
+**Last Updated:** 2026-03-09  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -24,18 +24,21 @@
 - [x] Branch protection enabled on all 5 repos (PR required, no force push) — B69-16 ✅
 - [x] Sprint 0 — Foundation created in Jira (B69-2, B69-3, B69-4, B69-5, B69-6, B69-16)
 
-### Day 2 — API Scaffold ✅ COMPLETE (2026-02-14)
+### Day 2 — API Scaffold ✅ COMPLETE (2026-03-09)
 - [x] `birdie69-api`: .NET 8 Clean Architecture scaffold (Domain, Application, Infrastructure, Api) — B69-2 ✅
   - Domain entities: User, Couple, Question, Answer, InviteCode
   - CQRS handlers via MediatR, FluentValidation, AutoMapper
   - EF Core + PostgreSQL + Redis stubs
   - Azure AD B2C JWT middleware (stub)
-  - Swagger UI at `http://localhost:5000/swagger`
-  - 12 unit/application tests — all passing
+  - Swagger UI at `http://localhost:8080/swagger`
+  - 12 unit/application tests + 1 integration test — all passing
 - [x] `birdie69-api`: Docker Compose for local PostgreSQL + Redis
 - [x] Post-scaffold fixes: Swashbuckle (net8.0), FluentValidation DI, GlobalUsings, Result<T> wrapping
-- [x] Dockerfile fix: `Directory.Build.props` + `global.json` copied before `dotnet restore` — PR #3 ✅
+- [x] Dockerfile fix: `Directory.Build.props` + `global.json` before `dotnet restore`, `.dockerignore` added — PR #3, #4 ✅
 - [x] Dev agent prompt updated: mandatory iterative 8-step protocol (build/test after each layer)
+- [x] Dev auth bypass: `OnMessageReceived` replaces non-JWT Bearer tokens (e.g. "dev") with self-signed dev JWT; all validation disabled in non-prod — PR #5, #6, #7 ✅
+- [x] EF Core migrations: `InitialCreate` generated, auto-applied at startup in non-prod — PR #5 ✅
+- [x] Swagger fix: `AuthorizeOperationFilter` adds Bearer lock per `[Authorize]` operation so Swagger UI sends the token — PR #8 ✅
 
 ### Day 3 — CMS Setup
 - [ ] `birdie69-cms`: Strapi v5 initialized with PostgreSQL
