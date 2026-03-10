@@ -1,6 +1,6 @@
 # Roadmap — birdie69
 
-**Version:** 1.5  
+**Version:** 1.6  
 **Last Updated:** 2026-03-10  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
@@ -65,13 +65,19 @@
 - [x] Terraform 1.6.0 pinned via `.terraform-version`
 - [x] PR workflow followed: `feat/B69-5-terraform-scaffold` → PR #1 → merged ✅
 
-### Day 5 — Web Scaffold
-- [ ] `birdie69-web`: Next.js 14+ App Router initialized
-  - Tailwind CSS + shadcn/ui configured
-  - Capacitor initialized (iOS + Android targets)
-  - MSAL (Azure AD B2C) auth integration stub
-  - Basic layout: home page, login page
-- [ ] GitHub Actions CI (build + lint)
+### Day 5 — Web Scaffold ✅ COMPLETE (2026-03-10)
+- [x] `birdie69-web`: Next.js 14 App Router initialized — B69-4 ✅
+  - TypeScript + Tailwind CSS + ESLint, App Router, `src/` dir, `@/*` alias
+  - shadcn/ui: `components.json` + Button + Card components
+  - MSAL Azure AD B2C stub: `msalConfig.ts`, `msalInstance.ts`, `AuthProvider.tsx`
+  - Pages: home (`page.tsx` — Today's Question placeholder), login (`login/page.tsx`), protected layout (`(auth)/layout.tsx`)
+  - Capacitor: `capacitor.config.ts` (`appId: com.birdie69.app`, `webDir: out`), `next.config.ts` `output: "export"`
+  - TanStack Query + Zustand installed
+  - `.env.local.example` with MSAL + API URL placeholders
+  - Node 20 pinned via `.nvmrc`
+- [x] Vitest unit tests: `HomePage.test.tsx` (renders heading + sign-in prompt) — 2 tests passing
+- [x] GitHub Actions CI: `npm ci` + lint + build + test on PR to main
+- [x] PR workflow followed: `feat/B69-4-web-scaffold` → PR #1 → merged ✅
 
 ---
 
@@ -149,7 +155,7 @@
 
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
-| Phase 0: Foundation | 🔄 In Progress (Day 5 next) | Sprint 0 |
+| Phase 0: Foundation | ✅ Complete (Sprint 1 next) | Sprint 0 |
 | Phase 1: Core Features | ⏳ Planned | Sprint 1 + 2 |
 | Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
