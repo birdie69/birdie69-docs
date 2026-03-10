@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 1.3  
-**Last Updated:** 2026-03-09  
+**Version:** 1.4  
+**Last Updated:** 2026-03-10  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -40,13 +40,19 @@
 - [x] EF Core migrations: `InitialCreate` generated, auto-applied at startup in non-prod — PR #5 ✅
 - [x] Swagger fix: `AuthorizeOperationFilter` adds Bearer lock per `[Authorize]` operation so Swagger UI sends the token — PR #8 ✅
 
-### Day 3 — CMS Setup
-- [ ] `birdie69-cms`: Strapi v5 initialized with PostgreSQL
-  - `Question` content type (title, body, category, scheduledDate, tags)
-  - Read-only API token for birdie69-api consumption
-  - Docker Compose for local development
-- [ ] `birdie69-api`: Strapi integration (GET /questions/today endpoint)
-- [ ] GitHub Actions CI for birdie69-cms
+### Day 3 — CMS Setup ✅ COMPLETE (2026-03-10)
+- [x] `birdie69-cms`: Strapi v5 (5.36.1) initialized with PostgreSQL — B69-3 ✅
+  - `Question` content type: title, body, category (enum), scheduledDate, tags, isActive
+  - Read-only API token generated for birdie69-api
+  - Dockerfile multi-stage (builder + runtime), docker-compose with .tmp + dist volumes
+  - GitHub Actions CI: `npm ci` + `npm run build` on PR
+  - Node 20 pinned via `.nvmrc`
+- [x] `birdie69-api`: Strapi integration — `ICmsService` + `CmsService` (typed HttpClient + Redis cache, TTL=midnight UTC)
+  - `QuestionDto` updated: DocumentId, Title, Body, Category, ScheduledDate, Tags
+  - `GetTodayQuestionQueryHandler` uses `ICmsService` (replaces local DB lookup)
+  - Redis fallback to in-memory cache when Redis unavailable
+  - docker-compose: PostgreSQL port 5433 (conflict-free with CMS on 5432)
+  - 3 integration tests: 401 / 404 (CMS null) / 200 (CMS has question) — all passing
 
 ### Day 4 — Terraform Foundation
 - [ ] `birdie69-infra`: Brick → Blueprint → Env structure initialized
@@ -139,7 +145,7 @@
 
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
-| Phase 0: Foundation | 🔄 In Progress (Day 3 next) | Sprint 0 |
+| Phase 0: Foundation | 🔄 In Progress (Day 4 next) | Sprint 0 |
 | Phase 1: Core Features | ⏳ Planned | Sprint 1 + 2 |
 | Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
