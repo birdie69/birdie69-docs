@@ -53,11 +53,14 @@ Sync these to Confluence space B69.
 ## Sync Rules
 
 1. **Direction:** Markdown → Confluence (never the reverse)
-2. **Mermaid diagrams:** Use Confluence Mermaid macro (Mermaid for Confluence by Tech Labs)
+2. **Checkboxes:** ALWAYS use `- [x]` (complete) and `- [ ]` (incomplete) markdown syntax.
+   NEVER replace with plain text like "Done:" or "To Do:" — that loses the checkbox rendering.
+   The MCP converts `- [x]` → `<ac:task-status>complete</ac:task-status>` correctly.
+3. **Mermaid diagrams:** Use Confluence Mermaid macro (Mermaid for Confluence by Tech Labs)
    - Wrap mermaid blocks in the Confluence macro — the sync script handles conversion
-3. **Tables:** Standard markdown tables → Confluence table format
-4. **Code blocks:** Wrap in Confluence code macro with language specified
-5. **Headings:** H1 = page title (skip), H2+ = section headings
+4. **Tables:** Standard markdown tables → Confluence table format
+5. **Code blocks:** Wrap in Confluence code macro with language specified
+6. **Headings:** H1 = page title (skip), H2+ = section headings
 
 ---
 
