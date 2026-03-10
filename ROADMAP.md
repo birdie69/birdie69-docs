@@ -1,6 +1,6 @@
 # Roadmap — birdie69
 
-**Version:** 1.4  
+**Version:** 1.5  
 **Last Updated:** 2026-03-10  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
@@ -54,12 +54,16 @@
   - docker-compose: PostgreSQL port 5433 (conflict-free with CMS on 5432)
   - 3 integration tests: 401 / 404 (CMS null) / 200 (CMS has question) — all passing
 
-### Day 4 — Terraform Foundation
-- [ ] `birdie69-infra`: Brick → Blueprint → Env structure initialized
-  - Bricks: container_app, postgres, redis, key_vault, blob_storage
-  - Blueprint: `app/` (full birdie69 stack)
-  - Envs: dev, staging, prod (variables only, no apply yet)
-- [ ] GitHub Actions: terraform fmt + validate on PR
+### Day 4 — Terraform Foundation ✅ COMPLETE (2026-03-10)
+- [x] `birdie69-infra`: Brick → Blueprint → Env structure initialized — B69-5 ✅
+  - Bricks: container_app, postgres, redis, key_vault, blob_storage, container_registry
+  - Blueprint: `blueprints/app/` — composes all bricks + Log Analytics + Container Apps Environment
+  - Envs: dev / staging / prod with env-specific sizing (no apply yet)
+  - Dev: postgres B_Standard_B1ms, redis Basic C0 | Staging/Prod: GP_Standard_D2s_v3, Standard C1
+  - Sensitive values use `REPLACE_WITH_REAL_VALUE` placeholders — no secrets committed
+- [x] GitHub Actions CI: `terraform fmt --check` + `terraform validate -backend=false` (matrix: dev/staging/prod)
+- [x] Terraform 1.6.0 pinned via `.terraform-version`
+- [x] PR workflow followed: `feat/B69-5-terraform-scaffold` → PR #1 → merged ✅
 
 ### Day 5 — Web Scaffold
 - [ ] `birdie69-web`: Next.js 14+ App Router initialized
@@ -145,7 +149,7 @@
 
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
-| Phase 0: Foundation | 🔄 In Progress (Day 4 next) | Sprint 0 |
+| Phase 0: Foundation | 🔄 In Progress (Day 5 next) | Sprint 0 |
 | Phase 1: Core Features | ⏳ Planned | Sprint 1 + 2 |
 | Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
