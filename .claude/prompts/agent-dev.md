@@ -51,6 +51,7 @@ Before any task, read:
 - ❌ Change requirements (ask BA agent)
 - ❌ Skip tests to ship faster
 - ❌ Hardcode secrets or environment values
+- ❌ **Push directly to `main`** — every change goes on a feature branch, opened as a PR, merged only after review. No exceptions, not even for "small fixes" or scaffolds.
 
 ---
 
@@ -224,6 +225,7 @@ async function registerPushNotifications() {
 ## PR Checklist
 
 Before opening a PR:
+- [ ] Working on a **feature branch** (never directly on `main`)
 - [ ] `dotnet build` passes (or `npm run build`)
 - [ ] All tests pass
 - [ ] No new linter errors
