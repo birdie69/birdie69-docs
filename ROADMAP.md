@@ -1,6 +1,6 @@
 # Roadmap — birdie69
 
-**Version:** 1.6  
+**Version:** 1.7  
 **Last Updated:** 2026-03-10  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
@@ -86,12 +86,11 @@
 **Goal:** Partner connection + daily question + answer submission working end-to-end.
 
 ### Sprint 1 — Partner Connection
-- [ ] `B69-xx`: POST /couple/invite — generate invite code
-- [ ] `B69-xx`: POST /couple/join — join via invite code
-- [ ] `B69-xx`: Couple status in user profile
-- [ ] `B69-xx`: Web UI — Invite / Join couple screens
-- [ ] `B69-xx`: Database: User, Couple entities + migrations
-- [ ] `B69-xx`: Unit tests: CoupleService (invite, join, conflict cases)
+- [ ] B69-7: User profile API — GET /me autoprovision, PUT /me update, EF Core migration
+- [ ] B69-8: Couple invite API — POST /couples (create/regenerate), GET /couples/me
+- [ ] B69-9: Couple join API — POST /couples/join
+- [ ] B69-10: Couple leave/cancel API — DELETE /couples/me
+- [ ] B69-11: Web UI — onboarding, invite/join/couple status/leave screens
 
 ### Sprint 2 — Daily Question Flow
 - [ ] `B69-xx`: Strapi: question bank seeded (20 questions minimum)
