@@ -1,6 +1,6 @@
 # Roadmap — birdie69
 
-**Version:** 1.7  
+**Version:** 1.8  
 **Last Updated:** 2026-03-10  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
@@ -154,8 +154,8 @@
 
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
-| Phase 0: Foundation | ✅ Complete (Sprint 1 next) | Sprint 0 |
-| Phase 1: Core Features | ⏳ Planned | Sprint 1 + 2 |
+| Phase 0: Foundation | ✅ Complete | Sprint 0 |
+| Phase 1: Core Features | 🏃 In Progress (Sprint 1 active) | Sprint 1 + 2 |
 | Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
 | Phase 4: Production | ⏳ Planned | Sprint 7 |
