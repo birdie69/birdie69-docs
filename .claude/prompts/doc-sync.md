@@ -56,11 +56,14 @@ Sync these to Confluence space B69.
 2. **Checkboxes:** ALWAYS use `- [x]` (complete) and `- [ ]` (incomplete) markdown syntax.
    NEVER replace with plain text like "Done:" or "To Do:" — that loses the checkbox rendering.
    The MCP converts `- [x]` → `<ac:task-status>complete</ac:task-status>` correctly.
-3. **Mermaid diagrams:** Use Confluence Mermaid macro (Mermaid for Confluence by Tech Labs)
+3. **No nested lists under checkboxes:** The Confluence markdown parser crashes with `Cannot read properties of undefined (reading 'type')` when a checkbox item has indented sub-items (`  - sub-item`).
+   Workaround: flatten sub-items inline into the parent checkbox text, e.g.:
+   `- [x] Parent item (detail one, detail two, detail three)`
+4. **Mermaid diagrams:** Use Confluence Mermaid macro (Mermaid for Confluence by Tech Labs)
    - Wrap mermaid blocks in the Confluence macro — the sync script handles conversion
-4. **Tables:** Standard markdown tables → Confluence table format
-5. **Code blocks:** Wrap in Confluence code macro with language specified
-6. **Headings:** H1 = page title (skip), H2+ = section headings
+5. **Tables:** Standard markdown tables → Confluence table format
+6. **Code blocks:** Wrap in Confluence code macro with language specified
+7. **Headings:** H1 = page title (skip), H2+ = section headings
 
 ---
 
