@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 1.9  
-**Last Updated:** 2026-03-11  
+**Version:** 2.0  
+**Last Updated:** 2026-03-14  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -93,12 +93,10 @@
 - [x] B69-11: Web UI — onboarding, invite/join/couple status/leave screens (11 tests passing)
 
 ### Sprint 2 — Daily Question Flow
-- [ ] `B69-xx`: Strapi: question bank seeded (20 questions minimum)
-- [ ] `B69-xx`: GET /questions/today — fetch from Strapi, cache in Redis
-- [ ] `B69-xx`: POST /answers — submit answer (hidden until both answered)
-- [ ] `B69-xx`: GET /answers/{questionId} — reveal only when both submitted
-- [ ] `B69-xx`: Web UI — Today's question screen + answer form
-- [ ] `B69-xx`: Web UI — Answer reveal screen
+- [ ] [B69-17](https://narwhal.atlassian.net/browse/B69-17): Strapi: question bank seeded (20+ questions, 4 categories)
+- [ ] [B69-18](https://narwhal.atlassian.net/browse/B69-18): API: Question entity, EF Core migration, GET /v1/questions/today with Strapi upsert
+- [ ] [B69-19](https://narwhal.atlassian.net/browse/B69-19): API: Answer entity, EF Core migration, POST /v1/answers, GET /v1/answers/{questionId} reveal
+- [ ] [B69-20](https://narwhal.atlassian.net/browse/B69-20): Web UI: today's question screen, answer form, partner reveal screen
 
 ---
 
@@ -155,7 +153,7 @@
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
 | Phase 0: Foundation | ✅ Complete | Sprint 0 |
-| Phase 1: Core Features | 🏃 In Progress (Sprint 1 active) | Sprint 1 + 2 |
+| Phase 1: Core Features | 🏃 In Progress (Sprint 2 active) | Sprint 1 + 2 |
 | Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
 | Phase 4: Production | ⏳ Planned | Sprint 7 |
