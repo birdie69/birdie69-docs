@@ -1,0 +1,326 @@
+openapi: 3.1.0
+info:
+  title: birdie69 API — Answers
+  version: "1.0"
+  description: |
+    Endpoints for submitting answers and revealing both partners' answers.
+
+    **Core business rules:**
+    - An answer can only be submitted once per question per user.
+    - A user must be in an active couple to submit or retrieve answers.
+    - Both partners' answers are only visible after **both** have submitted (ADR-007).
+
+servers:
+  - url: https://api.birdie69.app/v1
+    description: Production
+  - url: https://api-dev.birdie69.app/v1
+    description: Development
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: answers
+    description: Answer submission and reveal
+
+paths:
+  /answers:
+    post:
+      operationId: submitAnswer
+      tags: [answers]
+      summary: Submit an answer to today's question
+      description: |
+        Submits the authenticated user's answer for a given question.
+
+        The `questionId` must be the local database Guid returned by
+        `GET /v1/questions/today` in the `id` field (see ADR-006).
+
+        **Business rules enforced:**
+        - User must be authenticated and have an active couple.
+        - User cannot answer the same question twice (idempotent-safe: returns 409 on retry).
+        - The question must exist in the local database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitAnswerRequest"
+            example:
+              questionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+              text: "Riding my bike to the park with my dad on a Sunday morning."
+      responses:
+        "201":
+          description: Answer submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitAnswerResponse"
+              example:
+                id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+          headers:
+            Location:
+              description: URL of the answer reveal endpoint for this question
+              schema:
+                type: string
+                format: uri
+              example: "/v1/answers/3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        "400":
+          description: Invalid request body (e.g., empty text)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationProblemDetails"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Question not found (invalid questionId)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: "https://birdie69.app/errors/not-found"
+                title: "Not Found"
+                status: 404
+                detail: "Question '3fa85f64-...' not found."
+                code: "Question.NotFound"
+        "409":
+          description: |
+            Conflict. One of:
+            - User has already submitted an answer for this question (`Answer.AlreadySubmitted`)
+            - User is not in an active couple (`Answer.NoCouple`)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              examples:
+                already_submitted:
+                  value:
+                    type: "https://birdie69.app/errors/conflict"
+                    title: "Conflict"
+                    status: 409
+                    detail: "You have already answered this question."
+                    code: "Answer.AlreadySubmitted"
+                no_couple:
+                  value:
+                    type: "https://birdie69.app/errors/conflict"
+                    title: "Conflict"
+                    status: 409
+                    detail: "You must be in an active couple to answer."
+                    code: "Answer.NoCouple"
+
+  /answers/{questionId}:
+    get:
+      operationId: getAnswers
+      tags: [answers]
+      summary: Get both partners' answers for a question
+      description: |
+        Returns the answer reveal state for the given question.
+
+        **Always returns HTTP 200** when the question exists and the user is in an active
+        couple. The `isRevealed` flag and null-checks on `myAnswer`/`partnerAnswer` indicate
+        the current state (ADR-007):
+
+        | `myAnswer` | `partnerAnswer` | `isRevealed` | Client UI |
+        |:---:|:---:|:---:|:---|
+        | `null` | `null` | `false` | Show "Answer today's question" CTA |
+        | present | `null` | `false` | Show "Waiting for your partner..." |
+        | present | present | `true` | Reveal both answers |
+
+        Partner's answer text is **only populated when `isRevealed = true`**.
+        Even when `isRevealed = false`, the partner's answer text is never returned
+        (the field is `null`), preventing premature peeking.
+      parameters:
+        - name: questionId
+          in: path
+          required: true
+          description: Local database Guid of the question (from `GET /v1/questions/today`)
+          schema:
+            type: string
+            format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+      responses:
+        "200":
+          description: Answer reveal state (always returned when question exists and user is coupled)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnswerRevealResponse"
+              examples:
+                not_answered_yet:
+                  summary: Neither partner has answered
+                  value:
+                    questionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    isRevealed: false
+                    myAnswer: null
+                    partnerAnswer: null
+                waiting_for_partner:
+                  summary: I answered, partner has not yet
+                  value:
+                    questionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    isRevealed: false
+                    myAnswer:
+                      id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                      text: "Riding my bike to the park with my dad on a Sunday morning."
+                      submittedAt: "2026-03-14T09:15:00Z"
+                    partnerAnswer: null
+                revealed:
+                  summary: Both answered — reveal
+                  value:
+                    questionId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    isRevealed: true
+                    myAnswer:
+                      id: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+                      text: "Riding my bike to the park with my dad on a Sunday morning."
+                      submittedAt: "2026-03-14T09:15:00Z"
+                    partnerAnswer:
+                      id: "a1b2c3d4-1234-5678-abcd-ef0123456789"
+                      text: "Building sandcastles on the beach with my sister."
+                      submittedAt: "2026-03-14T11:42:00Z"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: Question not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: "https://birdie69.app/errors/not-found"
+                title: "Not Found"
+                status: 404
+                detail: "Question '3fa85f64-...' not found."
+                code: "Question.NotFound"
+        "409":
+          description: User is not in an active couple
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: "https://birdie69.app/errors/conflict"
+                title: "Conflict"
+                status: 409
+                detail: "You must be in an active couple."
+                code: "Answer.NoCouple"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Azure AD B2C access token
+
+  schemas:
+    SubmitAnswerRequest:
+      type: object
+      required: [questionId, text]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+          description: |
+            The local database Guid from `GET /v1/questions/today` → `id` field.
+            Do NOT use the Strapi `documentId` string here.
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        text:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          description: The user's answer text.
+          example: "Riding my bike to the park with my dad on a Sunday morning."
+
+    SubmitAnswerResponse:
+      type: object
+      required: [id]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: The newly created answer's ID.
+          example: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+
+    AnswerRevealResponse:
+      type: object
+      required: [questionId, isRevealed]
+      properties:
+        questionId:
+          type: string
+          format: uuid
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        isRevealed:
+          type: boolean
+          description: |
+            `true` when both partners have submitted. When `true`, `partnerAnswer` is populated.
+          example: false
+        myAnswer:
+          oneOf:
+            - $ref: "#/components/schemas/AnswerDto"
+            - type: "null"
+          description: The authenticated user's own answer. `null` if not yet submitted.
+        partnerAnswer:
+          oneOf:
+            - $ref: "#/components/schemas/AnswerDto"
+            - type: "null"
+          description: |
+            The partner's answer. Only populated when `isRevealed = true`.
+            Always `null` when `isRevealed = false`, even if the partner has answered.
+
+    AnswerDto:
+      type: object
+      required: [id, text, submittedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+        text:
+          type: string
+          example: "Riding my bike to the park with my dad on a Sunday morning."
+        submittedAt:
+          type: string
+          format: date-time
+          example: "2026-03-14T09:15:00Z"
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          description: Machine-readable error code for client-side localisation.
+
+    ValidationProblemDetails:
+      allOf:
+        - $ref: "#/components/schemas/ProblemDetails"
+        - type: object
+          properties:
+            errors:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+              example:
+                text: ["'text' must not be empty."]
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          example:
+            type: "https://birdie69.app/errors/unauthorized"
+            title: "Unauthorized"
+            status: 401

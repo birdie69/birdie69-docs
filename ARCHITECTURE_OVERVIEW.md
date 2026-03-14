@@ -1,9 +1,9 @@
 # Architecture Overview — birdie69
 
-**Version:** 1.0  
-**Date:** 2026-02-14  
+**Version:** 1.1  
+**Date:** 2026-03-14  
 **Author:** SA Agent  
-**Status:** Draft (pre-implementation)
+**Status:** Active (Sprint 2 — Daily Question Flow)
 
 ---
 
@@ -163,19 +163,73 @@ birdie69-infra/
 |--------|-------------|
 | `User` | Authenticated user (externalId = B2C Object ID) |
 | `Couple` | Relationship between two Users (invite code) |
-| `Question` | Daily question (sourced from Strapi) |
+| `Question` | Daily question — local DB snapshot of the Strapi question |
 | `Answer` | A user's answer to a question |
 | `AnswerReveal` | Record of when answers were revealed |
 | `Streak` | Daily engagement streak for a user |
 | `Notification` | Scheduled push notification record |
 
+### Question + Answer Domain Model (Sprint 2)
+
+```mermaid
+erDiagram
+    Question {
+        Guid    Id            PK
+        string  ExternalId    UK  "Strapi documentId"
+        string  Title
+        string  Body
+        string  Category
+        DateOnly ScheduledDate UK
+        string  Tags
+        DateTime SyncedAt
+    }
+
+    Answer {
+        Guid     Id           PK
+        Guid     UserId       FK
+        Guid     QuestionId   FK
+        Guid     CoupleId     FK
+        string   Text
+        DateTime SubmittedAt
+        bool     IsRevealed
+    }
+
+    User ||--o{ Answer : "submits"
+    Question ||--o{ Answer : "has"
+    Couple ||--o{ Answer : "scopes"
+```
+
+**Question lifecycle:**
+1. Content editor creates question in Strapi with a `scheduledDate`.
+2. On first `GET /v1/questions/today` of the day: API fetches from Strapi (Redis-cached),
+   upserts a local `Question` row (idempotent, unique index on `ExternalId` + `ScheduledDate`).
+3. Local `Question.Id` (Guid) is returned to clients as the stable reference.
+4. `Answer.QuestionId` FK points to the local `Question.Id`.
+
+**Answer reveal flow:**
+```
+User A submits answer → Answer(IsRevealed=false) stored
+User B submits answer → Answer(IsRevealed=false) stored
+                      → AnswerSubmittedEvent raised
+                      → Both partners now answered
+GET /v1/answers/{questionId}
+  → BothPartnersAnsweredAsync = true
+  → Returns AnswerRevealDto { isRevealed: true, myAnswer: ..., partnerAnswer: ... }
+```
+
+See **ADR-006** for the Question persistence strategy and **ADR-007** for the answer
+reveal API contract.
+
 ### Key Business Rules
 
 1. A user can only be in one active couple at a time
 2. An answer can only be submitted once per question per user
-3. Answers are revealed only when **both** partners have submitted
-4. A new question is published daily at midnight UTC
-5. Push notifications are sent at a configurable time per couple (default: 8:00 AM local)
+3. Answers are revealed only when **both** partners have submitted (ADR-007)
+4. `GET /v1/answers/{questionId}` always returns HTTP 200 with `isRevealed: bool` —
+   the client uses `myAnswer`/`partnerAnswer` null-checks to determine render state
+5. A new question is published daily at midnight UTC via Strapi `scheduledDate`
+6. The local `Question` table is upserted on first `GET /questions/today` (ADR-006)
+7. Push notifications are sent at a configurable time per couple (default: 8:00 AM local)
 
 ---
 
@@ -187,17 +241,17 @@ Base URL: `https://api.birdie69.app/v1`
 
 ### Core Endpoints (MVP)
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/questions/today` | Get today's question |
-| POST | `/answers` | Submit an answer |
-| GET | `/answers/{questionId}` | Get answers (only after both submitted) |
-| GET | `/couple` | Get current couple info |
-| POST | `/couple/invite` | Generate invite code |
-| POST | `/couple/join` | Join via invite code |
-| GET | `/history` | Paginated Q&A history |
-| GET | `/profile` | Get own profile |
-| PUT | `/profile` | Update profile |
+| Method | Path | Description | OpenAPI Spec |
+|--------|------|-------------|-------------|
+| GET | `/questions/today` | Get today's question (local Guid in response) | `api-specs/v1-questions.yaml` |
+| POST | `/answers` | Submit an answer (body: `{ questionId: Guid, text }`) | `api-specs/v1-answers.yaml` |
+| GET | `/answers/{questionId}` | Returns `AnswerRevealDto` with `isRevealed` flag (always 200) | `api-specs/v1-answers.yaml` |
+| GET | `/couple` | Get current couple info | `api-specs/v1-couple.yaml` |
+| POST | `/couple/invite` | Generate invite code | `api-specs/v1-couple.yaml` |
+| POST | `/couple/join` | Join via invite code | `api-specs/v1-couple.yaml` |
+| GET | `/history` | Paginated Q&A history | — |
+| GET | `/profile` | Get own profile | — |
+| PUT | `/profile` | Update profile | — |
 
 ---
 

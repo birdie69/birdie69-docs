@@ -1,0 +1,151 @@
+openapi: 3.1.0
+info:
+  title: birdie69 API — Questions
+  version: "1.0"
+  description: |
+    Endpoints for fetching the daily question.
+    The question is sourced from Strapi CMS and cached in Redis until midnight UTC.
+    On cache miss the question is upserted into the local database (ADR-006).
+
+servers:
+  - url: https://api.birdie69.app/v1
+    description: Production
+  - url: https://api-dev.birdie69.app/v1
+    description: Development
+
+security:
+  - BearerAuth: []
+
+tags:
+  - name: questions
+    description: Daily question management
+
+paths:
+  /questions/today:
+    get:
+      operationId: getTodayQuestion
+      tags: [questions]
+      summary: Get today's question
+      description: |
+        Returns the daily question for today (UTC date).
+
+        **Flow:**
+        1. Redis cache is checked first (key: `question:today:YYYY-MM-DD`).
+        2. On cache miss, Strapi is queried by `scheduledDate = today` and `isActive = true`.
+        3. The returned question is upserted into the local `Questions` table.
+        4. The response includes the local `id` (Guid) which the client must use
+           when submitting an answer (`POST /v1/answers`).
+
+        Returns **404** when no question is scheduled for today in Strapi.
+      responses:
+        "200":
+          description: Today's question
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionResponse"
+              example:
+                id: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                documentId: "abc123xyz"
+                title: "What is your happiest childhood memory?"
+                body: "Take a moment to think back to a specific scene — where were you, who was there, and what made it so joyful?"
+                category: "deep"
+                scheduledDate: "2026-03-14"
+                tags: ["memory", "childhood", "joy"]
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          description: No question is scheduled for today
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+              example:
+                type: "https://birdie69.app/errors/not-found"
+                title: "Not Found"
+                status: 404
+                detail: "No question found for 2026-03-14"
+                code: "Question.NotFound"
+        "503":
+          description: Strapi CMS is unavailable and no cached question exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProblemDetails"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Azure AD B2C access token
+
+  schemas:
+    QuestionResponse:
+      type: object
+      required: [id, documentId, title, body, category, scheduledDate, tags]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: |
+            Local database ID (Guid). Use this value in `POST /v1/answers` as `questionId`.
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        documentId:
+          type: string
+          description: Strapi CMS document identifier (string). For reference only.
+          example: "abc123xyz"
+        title:
+          type: string
+          maxLength: 200
+          description: Short question title displayed as the heading.
+          example: "What is your happiest childhood memory?"
+        body:
+          type: string
+          maxLength: 2000
+          description: Full question text / prompt shown to the user.
+          example: "Take a moment to think back to a specific scene — where were you, who was there, and what made it so joyful?"
+        category:
+          type: string
+          description: Question category (e.g., deep, fun, intimacy).
+          example: "deep"
+        scheduledDate:
+          type: string
+          format: date
+          description: The UTC date this question is scheduled for.
+          example: "2026-03-14"
+        tags:
+          type: array
+          items:
+            type: string
+          description: Searchable tags associated with this question.
+          example: ["memory", "childhood", "joy"]
+
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        code:
+          type: string
+          description: Machine-readable error code used by clients for localisation.
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid Bearer token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          example:
+            type: "https://birdie69.app/errors/unauthorized"
+            title: "Unauthorized"
+            status: 401
