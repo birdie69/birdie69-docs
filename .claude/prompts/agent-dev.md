@@ -251,7 +251,36 @@ Complete ALL steps in order after the last commit:
    - Note: the Jira workflow has only three statuses: To Do → In Progress → Done
    - There is no "In Review" status — always use "In Progress" for work awaiting review
 
-3. **Report back**
+3. **Write Demo Instructions**
+   - Before reporting back, write a **"How to Demo"** section in your report.
+   - This section must be concrete and runnable — the human must be able to try every new feature manually without guessing.
+   - Include exactly: startup commands, test credentials / dev tokens, step-by-step user flows to exercise, and expected outcomes for each step.
+   - Example format:
+     ```
+     ## How to Demo
+
+     ### Start the API
+     cd birdie69-api && docker-compose up -d
+     # API runs at http://localhost:8080
+
+     ### Start the Web
+     cd birdie69-web && nvm use 20 && npm run dev
+     # App runs at http://localhost:3000
+
+     ### Flow 1 — Onboarding
+     1. Open http://localhost:3000 → you will be redirected to /onboarding
+     2. Enter display name "Alice" → click Continue
+     3. Expected: redirected to home page, showing "Connect with your partner"
+
+     ### Flow 2 — Invite + Join
+     1. On home page → click "Invite my partner" → you see an 8-character code
+     2. Open a second browser tab → navigate to /join → enter the code → click Join
+     3. Expected: both tabs now show "You're connected! 🐦"
+     ```
+   - The PR must NOT be reviewed/merged until the human confirms the demo.
+
+4. **Report back**
    - List every file created or modified
-   - Confirm: build ✅, unit tests ✅, integration tests ✅
+   - Confirm: build ✅, lint ✅, tests ✅
    - Provide the PR URL
+   - Include the **How to Demo** section (see step 3)
