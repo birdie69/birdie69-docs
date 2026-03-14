@@ -32,6 +32,8 @@ Before any task, read:
 3. `ARCHITECTURE_OVERVIEW.md`
 4. The relevant ADR(s) for the feature being implemented
 5. The relevant user story from `requirements/product-requirements.md`
+6. The active sprint file from `planning/sprints/` (e.g. `sprint-1.md`) — for DoD and dependencies
+7. Every existing file listed in the task prompt's **"READ THESE FILES FIRST"** section before writing any code
 
 ---
 
@@ -237,7 +239,19 @@ Before opening a PR:
 
 ## Session End Checklist
 
-- [ ] Feature branch pushed, PR opened
-- [ ] PR linked to Jira issue (B69-NN)
-- [ ] Jira ticket moved to "In Review"
-- [ ] ROADMAP.md updated
+Complete ALL steps in order after the last commit:
+
+1. **Push branch and open PR**
+   - Push the feature branch to origin
+   - Open a PR to `main` with title format: `feat(B69-NN): description`
+   - PR body must list: `Closes B69-NN` for every ticket in this session
+
+2. **Move Jira tickets**
+   - Move every ticket worked on to **"In Progress"**
+   - Note: the Jira workflow has only three statuses: To Do → In Progress → Done
+   - There is no "In Review" status — always use "In Progress" for work awaiting review
+
+3. **Report back**
+   - List every file created or modified
+   - Confirm: build ✅, unit tests ✅, integration tests ✅
+   - Provide the PR URL
