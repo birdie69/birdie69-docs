@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 2.0  
-**Last Updated:** 2026-03-14  
+**Version:** 2.1  
+**Last Updated:** 2026-03-18  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -92,11 +92,11 @@
 - [x] B69-10: Couple leave/cancel API — DELETE /couples/me (Pending=Cancel, Active=Disband)
 - [x] B69-11: Web UI — onboarding, invite/join/couple status/leave screens (11 tests passing)
 
-### Sprint 2 — Daily Question Flow
-- [ ] [B69-17](https://narwhal.atlassian.net/browse/B69-17): Strapi: question bank seeded (20+ questions, 4 categories)
-- [ ] [B69-18](https://narwhal.atlassian.net/browse/B69-18): API: Question entity, EF Core migration, GET /v1/questions/today with Strapi upsert
-- [ ] [B69-19](https://narwhal.atlassian.net/browse/B69-19): API: Answer entity, EF Core migration, POST /v1/answers, GET /v1/answers/{questionId} reveal
-- [ ] [B69-20](https://narwhal.atlassian.net/browse/B69-20): Web UI: today's question screen, answer form, partner reveal screen
+### Sprint 2 — Daily Question Flow ✅ COMPLETE (2026-03-18)
+- [x] [B69-17](https://narwhal.atlassian.net/browse/B69-17): Strapi: question bank seeded (28 questions, 4 categories, idempotent script)
+- [x] [B69-18](https://narwhal.atlassian.net/browse/B69-18): API: Question entity, EF Core migration, GET /v1/questions/today (Redis + DB upsert + race guard)
+- [x] [B69-19](https://narwhal.atlassian.net/browse/B69-19): API: Answer entity, EF Core migration, POST /v1/answers, GET /v1/answers/{questionId} reveal (AnswerRevealDto)
+- [x] [B69-20](https://narwhal.atlassian.net/browse/B69-20): Web UI: question page (5 states), answer form, partner reveal, home integration (20 tests passing)
 
 ---
 
