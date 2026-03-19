@@ -1,9 +1,9 @@
 # Architecture Overview — birdie69
 
-**Version:** 1.1  
-**Date:** 2026-03-14  
+**Version:** 1.2  
+**Date:** 2026-03-19  
 **Author:** SA Agent  
-**Status:** Active (Sprint 2 — Daily Question Flow)
+**Status:** Active (Sprint 3 — Engagement Features)
 
 ---
 
@@ -159,15 +159,51 @@ birdie69-infra/
 
 ### Core Entities
 
-| Entity | Description |
-|--------|-------------|
-| `User` | Authenticated user (externalId = B2C Object ID) |
-| `Couple` | Relationship between two Users (invite code) |
-| `Question` | Daily question — local DB snapshot of the Strapi question |
-| `Answer` | A user's answer to a question |
-| `AnswerReveal` | Record of when answers were revealed |
-| `Streak` | Daily engagement streak for a user |
-| `Notification` | Scheduled push notification record |
+| Entity | Description | Sprint introduced |
+|--------|-------------|-------------------|
+| `User` | Authenticated user (externalId = B2C Object ID) | Sprint 0 |
+| `Couple` | Relationship between two Users (invite code, notification time preference) | Sprint 0 |
+| `Question` | Daily question — local DB snapshot of the Strapi question | Sprint 2 |
+| `Answer` | A user's answer to a question | Sprint 2 |
+| `Streak` | Per-user daily engagement streak (CurrentCount, LongestCount, LastActivityDate) | Sprint 3 |
+
+### Streak Domain Model (Sprint 3)
+
+The `Streak` entity tracks a user's consecutive daily answer submissions. It is updated
+via the `AnswerSubmittedEvent` domain event handler (Option A — stored counter, see ADR-008).
+
+```mermaid
+erDiagram
+    User ||--o| Streak : "has"
+
+    Streak {
+        Guid     Id                PK
+        Guid     UserId            FK
+        int      CurrentCount
+        int      LongestCount
+        DateOnly LastActivityDate
+        DateTime CreatedAt
+        DateTime UpdatedAt
+    }
+```
+
+**Streak update flow:**
+```
+User submits answer → Answer.Submit() raises AnswerSubmittedEvent
+  → AnswerSubmittedEventHandler (MediatR DomainEventNotification)
+  → Load or create Streak for UserId
+  → streak.RecordActivity(today)    // idempotent: no-op if IsActiveToday
+  → Persist via IStreakRepository
+GET /v1/streaks/me → StreakDto { currentCount, longestCount, lastActivityDate, isActiveToday }
+```
+
+**Key business rules:**
+- Streak increments when the user submits their answer (per-user, not per-couple for MVP)
+- `RecordActivity()` is idempotent — safe to re-process the event
+- `IsActiveToday()` returns true if `LastActivityDate == today`
+- See ADR-008 for streak calculation strategy and future couple-streak evolution path
+
+---
 
 ### Question + Answer Domain Model (Sprint 2)
 
@@ -217,8 +253,9 @@ GET /v1/answers/{questionId}
   → Returns AnswerRevealDto { isRevealed: true, myAnswer: ..., partnerAnswer: ... }
 ```
 
-See **ADR-006** for the Question persistence strategy and **ADR-007** for the answer
-reveal API contract.
+See **ADR-006** for the Question persistence strategy, **ADR-007** for the answer
+reveal API contract, **ADR-008** for streak calculation strategy, and **ADR-009**
+for push notification architecture.
 
 ### Key Business Rules
 
@@ -229,7 +266,9 @@ reveal API contract.
    the client uses `myAnswer`/`partnerAnswer` null-checks to determine render state
 5. A new question is published daily at midnight UTC via Strapi `scheduledDate`
 6. The local `Question` table is upserted on first `GET /questions/today` (ADR-006)
-7. Push notifications are sent at a configurable time per couple (default: 8:00 AM local)
+7. Push notifications are sent at a configurable time per couple (default: 08:00 local) — Sprint 4 delivery, Sprint 3 stores the preference (ADR-009)
+8. A user's streak increments each day they submit an answer; `Streak.RecordActivity()` is idempotent (ADR-008)
+9. `User.NotificationToken` stores the FCM device token for single-device push delivery (MVP); multi-device via `DeviceTokens` table is a future migration (ADR-009)
 
 ---
 
@@ -239,19 +278,23 @@ All endpoints follow REST conventions with OpenAPI 3.1 specification.
 
 Base URL: `https://api.birdie69.app/v1`
 
-### Core Endpoints (MVP)
+### Core Endpoints
 
-| Method | Path | Description | OpenAPI Spec |
-|--------|------|-------------|-------------|
-| GET | `/questions/today` | Get today's question (local Guid in response) | `api-specs/v1-questions.yaml` |
-| POST | `/answers` | Submit an answer (body: `{ questionId: Guid, text }`) | `api-specs/v1-answers.yaml` |
-| GET | `/answers/{questionId}` | Returns `AnswerRevealDto` with `isRevealed` flag (always 200) | `api-specs/v1-answers.yaml` |
-| GET | `/couple` | Get current couple info | `api-specs/v1-couple.yaml` |
-| POST | `/couple/invite` | Generate invite code | `api-specs/v1-couple.yaml` |
-| POST | `/couple/join` | Join via invite code | `api-specs/v1-couple.yaml` |
-| GET | `/history` | Paginated Q&A history | — |
-| GET | `/profile` | Get own profile | — |
-| PUT | `/profile` | Update profile | — |
+| Method | Path | Description | Sprint | OpenAPI Spec |
+|--------|------|-------------|--------|-------------|
+| GET | `/questions/today` | Get today's question (local Guid in response) | 2 | `api-specs/v1-questions.yaml` |
+| POST | `/answers` | Submit an answer (body: `{ questionId: Guid, text }`) | 2 | `api-specs/v1-answers.yaml` |
+| GET | `/answers/{questionId}` | Returns `AnswerRevealDto` with `isRevealed` flag (always 200) | 2 | `api-specs/v1-answers.yaml` |
+| GET | `/couples/me` | Get current couple info | 1 | `api-specs/v1-couple.yaml` |
+| POST | `/couples` | Create couple + generate invite code | 1 | `api-specs/v1-couple.yaml` |
+| POST | `/couples/join` | Join via invite code | 1 | `api-specs/v1-couple.yaml` |
+| DELETE | `/couples/me` | Leave / disband couple | 1 | `api-specs/v1-couple.yaml` |
+| GET | `/users/me` | Get own profile | 1 | — |
+| PUT | `/users/me` | Update profile | 1 | — |
+| GET | `/streaks/me` | Get current user's streak info | 3 | — |
+| GET | `/answers/history` | Paginated Q&A history (cursor-based) | 3 | — |
+| PUT | `/couples/me/notification-time` | Set couple notification time preference | 3 | — |
+| PUT | `/users/me/notification-token` | Register FCM device token | 3 | — |
 
 ---
 
