@@ -224,6 +224,38 @@ async function registerPushNotifications() {
 
 ---
 
+## .NET API Mandatory Patterns
+
+These must be applied in every API session — they were found missing in prior sprints:
+
+### CORS (required whenever a browser client exists)
+```csharp
+// Program.cs — before builder.Build()
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? ["http://localhost:3000"];
+builder.Services.AddCors(options =>
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod()));
+
+// Program.cs — after app.Build(), before UseAuthorization
+app.UseCors();
+```
+appsettings.Development.json must include:
+```json
+"Cors": { "AllowedOrigins": ["http://localhost:3000"] }
+```
+
+### JSON enum serialisation (always use string, never integer)
+```csharp
+// Program.cs — in AddControllers()
+builder.Services.AddControllers()
+    .AddJsonOptions(o =>
+        o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+```
+Without this, `"status": "Active"` serialises as `"status": 1` — breaking every frontend enum check.
+
+---
+
 ## PR Checklist
 
 Before opening a PR:
@@ -234,6 +266,8 @@ Before opening a PR:
 - [ ] No hardcoded secrets
 - [ ] PR title includes Jira issue: `B69-NN: [description]`
 - [ ] PR description explains what and why
+- [ ] (API only) CORS policy present in Program.cs
+- [ ] (API only) JsonStringEnumConverter registered in AddControllers()
 
 ---
 
