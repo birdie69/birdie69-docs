@@ -1,7 +1,7 @@
 # Roadmap — birdie69
 
-**Version:** 2.1  
-**Last Updated:** 2026-03-18  
+**Version:** 2.2  
+**Last Updated:** 2026-03-20  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
 ---
@@ -104,12 +104,17 @@
 
 **Goal:** Push notifications, streaks, history, gamification.
 
-- [ ] FCM push notification integration (.NET API → FCM)
+### Sprint 3 — Engagement Features 🏃 Active (2026-03-20)
+- [ ] [B69-29](https://narwhal.atlassian.net/browse/B69-29): API: wire streak tracking — AnswerSubmittedEvent handler + GET /v1/streaks/me (5 pts)
+- [ ] [B69-24](https://narwhal.atlassian.net/browse/B69-24): API: paginated GET /v1/answers/history — past Q&A pairs for the couple (5 pts)
+- [ ] [B69-25](https://narwhal.atlassian.net/browse/B69-25): API + Web: notification time preference — PUT /v1/couples/me/notification-time + settings page (3 pts)
+- [ ] [B69-26](https://narwhal.atlassian.net/browse/B69-26): API + Web: FCM device token registration — PUT /v1/users/me/notification-token + Capacitor push plugin (3 pts)
+- [ ] [B69-27](https://narwhal.atlassian.net/browse/B69-27): Web: streak milestone badges — 7/14/30-day overlay on question page (3 pts)
+- [ ] [B69-28](https://narwhal.atlassian.net/browse/B69-28): Mobile: Capacitor iOS + Android project init, verify build in iOS Simulator (3 pts)
+
+### Sprint 4 — Notifications Delivery (Planned)
+- [ ] FCM push notification delivery (.NET API → FCM via Azure Functions Timer Trigger)
 - [ ] Daily question notification at configurable time per couple
-- [ ] Streak tracking (daily answer = streak continues)
-- [ ] Answer history (paginated list of past Q&A)
-- [ ] Gamification: streak badges, milestone celebrations
-- [ ] Mobile: Capacitor build → iOS/Android app submitted to TestFlight/Internal Testing
 
 ---
 
@@ -153,8 +158,8 @@
 | Phase | Status | Jira Sprint |
 |-------|--------|------------|
 | Phase 0: Foundation | ✅ Complete | Sprint 0 |
-| Phase 1: Core Features | 🏃 In Progress (Sprint 2 active) | Sprint 1 + 2 |
-| Phase 2: Engagement | ⏳ Planned | Sprint 3 + 4 |
+| Phase 1: Core Features | ✅ Complete | Sprint 1 + 2 |
+| Phase 2: Engagement | 🏃 In Progress (Sprint 3 active) | Sprint 3 + 4 |
 | Phase 3: Payments | ⏳ Planned | Sprint 5 + 6 |
 | Phase 4: Production | ⏳ Planned | Sprint 7 |
 | Phase 5: Post-MVP | ⏳ Planned | Sprint 8+ |
