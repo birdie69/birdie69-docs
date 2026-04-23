@@ -1,25 +1,25 @@
 # Sprint 3 — Engagement Features
 
 **Sprint Name:** Sprint 3 — Engagement Features  
-**Status:** 🏃 Active  
+**Status:** ✅ COMPLETE  
 **Start Date:** 2026-03-20  
-**End Date:** TBD  
+**End Date:** 2026-04-24  
 **Sprint Goal:** Add engagement layer — streak tracking, answer history, notification preferences, FCM token capture, streak badges, and Capacitor mobile init
 
 ---
 
 ## Sprint Scope
 
-| Ticket | Summary | Points | Assignee |
-|--------|---------|--------|----------|
-| [B69-29](https://narwhal.atlassian.net/browse/B69-29) | API: wire streak tracking — AnswerSubmittedEvent handler + GET /v1/streaks/me | 5 | tamas.pinter@narwhal.hu |
-| [B69-24](https://narwhal.atlassian.net/browse/B69-24) | API: paginated GET /v1/answers/history — past Q&A pairs for the couple | 5 | tamas.pinter@narwhal.hu |
-| [B69-25](https://narwhal.atlassian.net/browse/B69-25) | API + Web: notification time preference — PUT /v1/couples/me/notification-time + settings page | 3 | tamas.pinter@narwhal.hu |
-| [B69-26](https://narwhal.atlassian.net/browse/B69-26) | API + Web: FCM device token registration — PUT /v1/users/me/notification-token + Capacitor push plugin | 3 | tamas.pinter@narwhal.hu |
-| [B69-27](https://narwhal.atlassian.net/browse/B69-27) | Web: streak milestone badges — 7/14/30-day overlay on question page | 3 | tamas.pinter@narwhal.hu |
-| [B69-28](https://narwhal.atlassian.net/browse/B69-28) | Mobile: Capacitor iOS + Android project init, verify build in iOS Simulator | 3 | tamas.pinter@narwhal.hu |
+| Ticket | Summary | Points | Status | PR |
+|--------|---------|--------|--------|----|
+| [B69-29](https://narwhal.atlassian.net/browse/B69-29) | API: wire streak tracking — AnswerSubmittedEvent handler + GET /v1/streaks/me | 5 | ✅ Done | birdie69-api #17 |
+| [B69-24](https://narwhal.atlassian.net/browse/B69-24) | API: paginated GET /v1/answers/history — past Q&A pairs for the couple | 5 | ✅ Done | birdie69-api #17 |
+| [B69-25](https://narwhal.atlassian.net/browse/B69-25) | API + Web: notification time preference — PUT /v1/couples/me/notification-time + settings page | 3 | ✅ Done | birdie69-api #16, birdie69-web #6 |
+| [B69-26](https://narwhal.atlassian.net/browse/B69-26) | API + Web: FCM device token registration — PUT /v1/users/me/notification-token + Capacitor push plugin | 3 | ✅ Done | birdie69-api #16, birdie69-web #6 |
+| [B69-27](https://narwhal.atlassian.net/browse/B69-27) | Web: streak milestone badges — 7/14/30-day overlay on question page | 3 | ✅ Done | birdie69-web #7 |
+| [B69-28](https://narwhal.atlassian.net/browse/B69-28) | Mobile: Capacitor iOS + Android project init, verify build in iOS Simulator | 3 | ✅ Done | birdie69-web #6 |
 
-**Total Points:** 22
+**Total Points:** 22 / 22 delivered
 
 ---
 
@@ -95,10 +95,19 @@ B69-28 (Capacitor init) is independent of all API tickets
 
 | Date | Update |
 |------|--------|
+| 2026-04-24 | Sprint closed. All 6 tickets transitioned to Done. 22/22 points delivered. ROADMAP.md v2.3 committed (9794638). Confluence synced. |
 | 2026-03-20 | Sprint started. Tickets B69-29, B69-24, B69-25, B69-26, B69-27, B69-28 created. Architectural decisions (ADR-008/009) confirmed by SA Agent. Streak: per-user stored counter (Option A). Notifications: Sprint 3 stores token/preference only; delivery deferred to Sprint 4 (ADR-009). Capacitor: iOS Simulator verification only (Option B). |
 
 ---
 
 ## Sprint Retrospective
 
-*To be filled at sprint close.*
+**What went well:**
+- All 6 tickets delivered on scope; 22/22 points
+- Clean separation between data-capture (Sprint 3) and delivery (Sprint 4) for push notifications
+- Capacitor iOS Simulator + Android Emulator verified
+
+**What to improve:**
+- Security tech debt (B69-21, B69-22, B69-23) should be addressed in Sprint 4 before production hardening
+
+**Sprint 4 focus:** FCM push notification delivery + security tech debt resolution
