@@ -1,9 +1,9 @@
 # Architecture Overview — birdie69
 
-**Version:** 1.2  
-**Date:** 2026-03-19  
+**Version:** 1.3  
+**Date:** 2026-04-24  
 **Author:** SA Agent  
-**Status:** Active (Sprint 3 — Engagement Features)
+**Status:** Active (Sprint 4 — Notifications Delivery + Tech Debt)
 
 ---
 
@@ -25,14 +25,16 @@ graph TB
         B2C[Azure AD B2C<br/>Identity Provider]
         ACA_API[Container App<br/>.NET 8 API]
         ACA_CMS[Container App<br/>Strapi v5 CMS]
+        ACA_JOB[ACA Job<br/>Notification Job<br/>cron: every 15 min]
         DB[(PostgreSQL 15+)]
         REDIS[(Redis Cache)]
         BLOB[Azure Blob Storage]
+        KV[Azure Key Vault]
     end
 
     subgraph External
         STRIPE[Stripe<br/>Payments]
-        FCM[Firebase<br/>Push Notifications]
+        FCM[Firebase FCM<br/>Push Notifications]
         SG[SendGrid<br/>Email]
         CF[Cloudflare<br/>CDN / WAF]
         MX[Mixpanel<br/>Analytics]
@@ -42,13 +44,17 @@ graph TB
     W -->|HTTPS| CF
     CF -->|JWT validated| ACA_API
     ACA_API -->|Auth token| B2C
-    ACA_API -->|Read-only| ACA_CMS
+    ACA_API -->|Read-only + token| ACA_CMS
     ACA_API --- DB
     ACA_API --- REDIS
     ACA_API --- BLOB
     ACA_API --- STRIPE
-    ACA_API --- FCM
     ACA_API --- SG
+    ACA_API -->|Managed Identity| KV
+    ACA_JOB -->|Query couples due| DB
+    ACA_JOB -->|Today's question| REDIS
+    ACA_JOB -->|Dispatch FCM| FCM
+    ACA_JOB -->|Managed Identity| KV
     M -->|Events| MX
     W -->|Events| MX
 ```
@@ -167,6 +173,43 @@ birdie69-infra/
 | `Answer` | A user's answer to a question | Sprint 2 |
 | `Streak` | Per-user daily engagement streak (CurrentCount, LongestCount, LastActivityDate) | Sprint 3 |
 
+### Notification Delivery (Sprint 4)
+
+Push notifications are dispatched by an **Azure Container Apps Job** running every 15 minutes
+(cron schedule). The job is a separate deployable container that shares the
+`Birdie69.Application` and `Birdie69.Infrastructure` layers with the API.
+
+```
+birdie69-notification-job/
+├── Program.cs              # Minimal host; wires Application + Infrastructure DI
+├── NotificationJobWorker.cs
+└── Dockerfile
+```
+
+Delivery flow (see ADR-010 for full sequence diagram):
+```
+ACA Job (every 15 min)
+  → Query couples WHERE NotificationTime IN [windowStart, windowEnd]
+  → For each couple: check if either partner has NOT answered today
+  → Fetch today's question title (Redis cache → Strapi fallback)
+  → Load User.NotificationToken for non-answering partner(s)
+  → INotificationSender.SendAsync(token, payload)
+      → StubNotificationSender (dev/test)
+      → FirebaseNotificationSender (staging/prod)
+  → On FCM UNREGISTERED: clear User.NotificationToken = null
+```
+
+**`INotificationSender` interface** (Application layer):
+```csharp
+public interface INotificationSender
+{
+    Task<NotificationResult> SendAsync(
+        string deviceToken,
+        NotificationPayload payload,
+        CancellationToken cancellationToken = default);
+}
+```
+
 ### Streak Domain Model (Sprint 3)
 
 The `Streak` entity tracks a user's consecutive daily answer submissions. It is updated
@@ -254,8 +297,9 @@ GET /v1/answers/{questionId}
 ```
 
 See **ADR-006** for the Question persistence strategy, **ADR-007** for the answer
-reveal API contract, **ADR-008** for streak calculation strategy, and **ADR-009**
-for push notification architecture.
+reveal API contract, **ADR-008** for streak calculation strategy, **ADR-009**
+for push notification architecture (token + preference model), and **ADR-010**
+for Sprint 4 delivery mechanism, tech debt resolutions, and FCM implementation decisions.
 
 ### Key Business Rules
 
@@ -266,9 +310,12 @@ for push notification architecture.
    the client uses `myAnswer`/`partnerAnswer` null-checks to determine render state
 5. A new question is published daily at midnight UTC via Strapi `scheduledDate`
 6. The local `Question` table is upserted on first `GET /questions/today` (ADR-006)
-7. Push notifications are sent at a configurable time per couple (default: 08:00 local) — Sprint 4 delivery, Sprint 3 stores the preference (ADR-009)
+7. Push notifications are dispatched by an ACA Job every 15 minutes; couples receive a push if at least one partner has not answered today and `NotificationTime` falls in the current window (ADR-009, ADR-010)
 8. A user's streak increments each day they submit an answer; `Streak.RecordActivity()` is idempotent (ADR-008)
 9. `User.NotificationToken` stores the FCM device token for single-device push delivery (MVP); multi-device via `DeviceTokens` table is a future migration (ADR-009)
+10. The Dev JWT bypass (`OnMessageReceived` handler) is gated by `IsDevelopment()` — disabled in Staging and Production (ADR-010, B69-21)
+11. Strapi requires a read-only API token in all non-dev environments; token is stored in Azure Key Vault (ADR-010, B69-22)
+12. All runtime secrets are stored in Azure Key Vault and accessed via Managed Identity; deploy-time secrets use GitHub Actions Secrets (ADR-010, B69-23)
 
 ---
 
@@ -304,9 +351,11 @@ Base URL: `https://api.birdie69.app/v1`
 |---------|----------|
 | Authentication | Azure AD B2C (OAuth 2.0 + PKCE) |
 | API Authorization | JWT Bearer tokens, validated by ASP.NET Core middleware |
+| Dev JWT bypass | `IsDevelopment()` guard — disabled in Staging/Production (ADR-010, B69-21) |
+| Strapi access | Read-only API token (Key Vault) + VNet isolation Phase 2 (ADR-010, B69-22) |
 | Data in Transit | TLS 1.3 everywhere |
 | Data at Rest | Azure-managed encryption (AES-256) |
-| Secrets Management | Azure Key Vault (accessed via Managed Identity) |
+| Secrets Management | Azure Key Vault (runtime, Managed Identity) + GitHub Actions Secrets (deploy-time) (ADR-010, B69-23) |
 | WAF | Cloudflare WAF (OWASP Top 10 protection) |
 | Rate Limiting | API Gateway level + .NET middleware |
 | CORS | Strict allowlist (birdie69 domains only) |
