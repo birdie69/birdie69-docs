@@ -1,6 +1,6 @@
 # Roadmap — birdie69
 
-**Version:** 2.3  
+**Version:** 2.4  
 **Last Updated:** 2026-04-24  
 **Learning Goal:** Build a complete AI-driven development workflow from HLD to shipped product.
 
@@ -115,9 +115,18 @@
 **Velocity:** 22 points delivered  
 **Tech Debt captured for Sprint 4:** B69-21 (dev JWT bypass), B69-22 (Strapi public API), B69-23 (hardcoded secrets)
 
-### Sprint 4 — Notifications Delivery (Planned)
-- [ ] FCM push notification delivery (.NET API → FCM via Azure Functions Timer Trigger)
-- [ ] Daily question notification at configurable time per couple
+### Sprint 4 — Notifications Delivery + Tech Debt 🏃 Active
+- [ ] [B69-30](https://narwhal.atlassian.net/browse/B69-30): API: Gate dev JWT bypass — wrap OnMessageReceived with IsDevelopment() (1 pt)
+- [ ] [B69-31](https://narwhal.atlassian.net/browse/B69-31): CMS: Strapi read-only API token + Azure Key Vault storage (2 pts)
+- [ ] [B69-32](https://narwhal.atlassian.net/browse/B69-32): Infra: Key Vault Managed Identity for birdie69-api Container App (3 pts)
+- [ ] [B69-33](https://narwhal.atlassian.net/browse/B69-33): NEW REPO birdie69-notification-job — .NET 8 ACA Job scaffold (3 pts)
+- [ ] [B69-34](https://narwhal.atlassian.net/browse/B69-34): Notification Job: GetCouplesDueForNotificationQuery eligibility rules (5 pts)
+- [ ] [B69-35](https://narwhal.atlassian.net/browse/B69-35): Notification Job: INotificationSender + StubNotificationSender + SendDailyNotificationsCommand (3 pts)
+- [ ] [B69-36](https://narwhal.atlassian.net/browse/B69-36): Infra: Terraform notification_job ACA Job brick, cron "0 * * * *" (3 pts)
+- [ ] [B69-37](https://narwhal.atlassian.net/browse/B69-37): API: OpenAPI spec + integration test for notification eligibility (2 pts)
+
+**Sprint 4 Velocity Target:** 22 points  
+**B69-38:** Deferred — conditional on human Firebase project setup
 
 ---
 
