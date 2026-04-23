@@ -44,6 +44,7 @@ Sync these to Confluence space B69.
 | `planning/backlog.md` | Product Backlog | Planning (95158273) | 95027726 |
 | `architecture/system-context.md` | System Context | Architecture (95125505) | 95027741 |
 | `specs/` (summary index) | Product Specifications (Original) | (root) | 95125561 |
+| `adrs/ADR-010-sprint4-notifications-delivery-tech-debt.md` | ADR-010: Sprint 4 — FCM Notification Delivery + Tech Debt Resolutions | ADRs (95092737) | 106856449 |
 
 **Confluence Space:** `B69`  
 **Base URL:** `https://narwhal.atlassian.net/wiki`
